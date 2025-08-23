@@ -1,5 +1,5 @@
 import React from 'react'
-import Search from './search'
+import Search from './Search'
 import Loading from './Loading'
 import MovieCard from './MovieCard'
 import ProgressBar from './ProgressBar'
