@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-function MovieCard({movie :{title, vote_average, poster_path, original_language, release_date, overview}}) {
+function MovieCard({movie :{title, vote_average, poster_path, original_language, release_date, overview}, onAddToWatchlist}) {
     const [showOverView, setShowOverView] =useState(false)
     const toggleOverView= ()=>{
         setShowOverView(!showOverView)
@@ -30,9 +30,16 @@ function MovieCard({movie :{title, vote_average, poster_path, original_language,
                     <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
                 </button>
+
                 
             </div>
             {showOverView && (<p className='lang'>{overview}</p>)}
+
+            <button 
+                onClick={onAddToWatchlist} 
+                className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg">
+                + Add to Watchlist
+            </button>
         </div>
     </div>
   )

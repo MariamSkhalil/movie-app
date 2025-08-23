@@ -11,34 +11,34 @@ const client= new Client()
 
 const database= new Databases(client)
 
-export const updateSearchCount = async (searchedFor, movie) =>{
-    
-    console.log(PROJECT_ID)
-    //1- access Appwrite SDK to check if the movie searched for already exists in the database
-    try {
-        const result= await database.listDocuments(DATABASE_ID,COLLECTION_ID,
-            [Query.equal('searchedFor',searchedFor) ])
+export const updateWatchlistCount = async (movie) => {
+  try {
+    // check if this movie already exists in DB
+    const result = await database.listDocuments(
+      DATABASE_ID,
+      COLLECTION_ID,
+      [Query.equal("movie_id", movie.id)]
+    );
 
-        //2- if it does, increment the count    
-        if (result.documents.length >0){
-            const doc = result.documents[0]
+    if (result.documents.length > 0) {
+      // already exists → increment count
+      const doc = result.documents[0];
 
-            await database.updateDocument(DATABASE_ID,COLLECTION_ID,doc.$id,
-                {count: doc.count +1} )
-
-        //3- if it doesnt, create a new document with the movie and count as 1        
-        }else{ 
-            await database.createDocument(DATABASE_ID,COLLECTION_ID,ID.unique(),
-                {   searchedFor,
-                    count: 1,
-                    movie_id: movie.id,
-                    poster_url: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
-                })
-        }
-
-    } catch (error) {
-        console.error(error)
+      await database.updateDocument(DATABASE_ID, COLLECTION_ID, doc.$id, {
+        count: doc.count + 1,
+      });
+    } else {
+      // doesn’t exist → create it
+      await database.createDocument(DATABASE_ID, COLLECTION_ID, ID.unique(), {
+        movie_id: movie.id,
+        title: movie.title,
+        count: 1,
+        poster_url: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`,
+      });
     }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 export const getTrendingMovies =async()=>{

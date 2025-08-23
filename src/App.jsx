@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
-import Search from './components/search'
-import Loading from './components/Loading'
-import MovieCard from './components/MovieCard'
-import { getTrendingMovies, updateSearchCount } from './appwrite'
+import { getTrendingMovies, updateWatchlistCount } from './appwrite'
+import Main from './components/Main'
+import SideBar from './components/SideBar'
 
 const API_BASE_URL= 'https://api.themoviedb.org/3'
 const API_KEY= import.meta.env.VITE_TMDB_API_KEY
@@ -11,7 +10,7 @@ const API_KEY= import.meta.env.VITE_TMDB_API_KEY
 const API_OPTIONS={
   method: 'GET',
   headers: {
-    accept: 'application/jason',
+    accept: 'application/json',
     authorization: `Bearer ${API_KEY}`
   }
 }
@@ -23,6 +22,42 @@ const App = () => {
   const [isLoading, setIsLoading]= useState(false) //Since loading from API can take time, you need to show the user it's loading
   const [debouncedSearchedFor, setDebouncedSearchedFor]= useState('')
   const [trendingMovies, setTrendingMovies]= useState([])
+  const [showSidebar , setShowSidebar]= useState(false)
+  //localStorage.clear()
+  const [watchlist, setWatchlist]= useState(()=>{
+    //load from LOCAL STORAGE at first load
+    const saved= localStorage.getItem("watchlist")
+    return saved ? JSON.parse(saved): [] 
+  })
+
+  function handleToggleShow(){
+    setShowSidebar(!showSidebar)
+    //console.log('button pressed', !showSidebar)
+  }
+
+  function handleAddToWatchlist(movie) {
+  // avoid duplicates
+    if (!watchlist.find(m => m.id === movie.id)) {
+      setWatchlist([...watchlist, {movie, watched: false}])
+      updateWatchlistCount(movie)
+    }
+  }
+
+  function handleRemoveFromWatchlist(movieID) {
+    setWatchlist(prev => prev.map(item =>
+    item.movie.id === movieID ? { ...item, watched: !item.watched } : item
+  ))
+  }
+
+  //Persist to Local Storage whenever watchlist changes
+  useEffect(()=>{
+    localStorage.setItem("watchlist", JSON.stringify(watchlist))
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const value = localStorage.getItem(key);
+      console.log(`Key: ${key}, Value: ${value}`);
+    }
+  }, [watchlist])
 
   //utilise debouncing so the api isnt called for each letter typed into the search form (too many api req) 
   //but after the user hasnt typed for 500ms
@@ -52,9 +87,9 @@ const App = () => {
       }
       setMovies(data.results || []) //Phase3: show the data results
 
-      if(query && data.results.length>0){
+      /*if(query && data.results.length>0){
         await updateSearchCount(query, data.results[0])
-      }
+      }*/
       
     } catch (error) {
       console.error(`Error fetching: ${error}`)
@@ -83,54 +118,10 @@ const App = () => {
   },[])
 
   return (
-    <main>
-      <div className='pattern'/>
-      <div className='wrapper'>
-        <header>
-          {/*<button className='py-2.5 px-5 text-sm font-medium text-indigo-500 focus:outline-none bg-transparent rounded hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-film" viewBox="0 0 16 16">
-            <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm4 0v6h8V1zm8 8H4v6h8zM1 1v2h2V1zm2 3H1v2h2zM1 7v2h2V7zm2 3H1v2h2zm-2 3v2h2v-2zM15 1h-2v2h2zm-2 3v2h2V4zm2 3h-2v2h2zm-2 3v2h2v-2zm2 3h-2v2h2z"/>
-            </svg>
-          </button>*/}
-          <img src='./hero-img.png' alt='Hero Banner'/> 
-          <h1> Your Next <span className='text-gradient'>Favourite Film</span> Is Just A Click Away </h1>
-          <Search searchedFor={searchedFor} setSearchedFor={setSearchedFor} />
-
-        </header>
-
-        {trendingMovies.length>0 && (
-          <section className='trending'>
-            <h2>Trending Movies</h2>
-            
-            <ul>
-              {trendingMovies.map((movie, index)=>(
-                <li key={movie.$id}>
-                  <p>{index +1}</p>
-                  <img src={movie.poster_url} alt={movie.title} />
-                </li>
-              ))}
-            </ul>
-
-          </section>
-        )}
-
-        <section className='all-movies'>
-          <h2 className='mt-10'>All Movies</h2>
-
-          {isLoading ? //first we load 
-          ( <Loading/> )
-          :errorMsg ? //either get an ERROR
-          (<p className='text-red-500'>{errorMsg}</p>)
-          :(<ul> {/*or we get RESULTS*/}
-              {movies.map((movie)=>(
-                <MovieCard key={movie.id} movie={movie}/>
-              ))}
-          </ul>)
-          }
-        </section>
-
-      </div>
-    </main>
+    <>
+      <Main searchedFor={searchedFor} setSearchedFor={setSearchedFor} errorMsg={errorMsg} watchlist={watchlist} trendingMovies={trendingMovies} isLoading={isLoading} movies={movies} handleToggleShow={handleToggleShow} handleAddToWatchlist={handleAddToWatchlist} />
+      {showSidebar && <SideBar handleToggleShow={handleToggleShow} watchlist={watchlist} handleRemoveFromWatchlist={handleRemoveFromWatchlist}/>}
+    </>
   )
 }
 

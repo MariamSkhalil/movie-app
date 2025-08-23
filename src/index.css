@@ -112,7 +112,7 @@
     }
 
     & .content {
-      @apply mt-2 flex flex-row items-center flex-wrap gap-2;
+      @apply mt-2 flex flex-row items-center flex-shrink gap-2;
     }
 
     & .rating {
@@ -139,10 +139,77 @@
       @apply text-gray-100 font-medium text-base;
     }
   }
+
+.list-card {
+  @apply bg-dark-100 p-3 mt-3 rounded-2xl shadow-inner shadow-light-100/20 flex;
+
+  & img {
+    @apply rounded-lg w-16 h-auto;
+  }
+
+  & h3 {
+    @apply text-white font-bold text-base line-clamp-1;
+  }
+
+  & .content {
+    @apply mt-2 flex flex-row items-center gap-2 flex-wrap;
+  }
+
+  & .rating p {
+    @apply font-bold text-base text-white;
+  }
+
+  & .content span {
+    @apply text-sm text-gray-100;
+  }
+
+  & .lang, & .year {
+    @apply text-gray-100 font-medium text-base;
+  }
+}
+
+}
+
+
+/* Default (mobile first) */
+.sideBar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;              /* take more space on small screens */
+  max-width: 320px;        /* don’t get too wide */
+  height: 100vh;
+  background: #0f0d23;
+  z-index: 9999;
+  transform: translateX(100%); /* start hidden */
+  transition: transform 0.3s ease-in-out;
+  box-shadow: -2px 0 20px rgba(0,0,0,0.5);
+}
+
+.sideBar.open {
+  transform: translateX(0); /* slide in when toggled */
+}
+
+.sideBarContent {
+  padding: 1rem;
+  color: white;
+}
+
+/* Larger screens can make it narrower or styled differently */
+@media (min-width: 640px) {
+  .sideBar {
+    width: 30%;
+    max-width: 400px;
+  }
+
 }
 
 @utility text-gradient {
   @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;
+}
+
+@utility bg-gradient {
+  @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] ;
 }
 
 @utility fancy-text {
