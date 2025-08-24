@@ -22,7 +22,7 @@ function Main({searchedFor, setSearchedFor, trendingMovies, isLoading, errorMsg,
 
         {trendingMovies.length>0 && (
           <section className='trending'>
-            <h2>Trending Movies</h2>
+            <h2 className='mb-15'>Trending Movies</h2>
             
             <ul>
               {trendingMovies.map((movie, index)=>(

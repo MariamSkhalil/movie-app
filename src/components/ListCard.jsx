@@ -1,8 +1,8 @@
 import React from 'react'
 
-function ListCard({ movie: { title, vote_average, poster_path, original_language, release_date }, onRemoveFromWatchlist }) {
+function ListCard({ movie: { title, vote_average, poster_path, original_language, release_date }, watched, onRemoveFromWatchlist }) {
   return (
-    <div className="list-card flex items-start gap-3">
+    <div className={`list-card flex items-start gap-3 ${watched ? "opacity-50" : ""}`}>
       <div className="flex-shrink-0">
         <img
           src={poster_path ? `https://image.tmdb.org/t/p/w500/${poster_path}` : './No-Poster.svg'}
@@ -27,13 +27,15 @@ function ListCard({ movie: { title, vote_average, poster_path, original_language
           <p className="year">{release_date ? release_date.split('-')[0] : 'N/A'}</p>
         </div>
 
-        {/* Remove button sits bottom-right */}
-        <button
-          onClick={onRemoveFromWatchlist}
-          className="mt-auto ml-auto text-gradient"
-        >
-          <i className="fa-solid fa-check"></i>
-        </button>
+       {/* Show check button ONLY if not watched */}
+        {!watched && (
+          <button
+            onClick={onRemoveFromWatchlist}
+            className="mt-auto ml-auto text-gradient"
+          >
+            <i className="fa-solid fa-check"></i>
+          </button>
+        )}
       </div>
     </div>
   )

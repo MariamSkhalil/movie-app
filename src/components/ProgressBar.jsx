@@ -5,9 +5,9 @@ function ProgressBar({watchlist}) {
     const watched= watchlist.filter(m=> m.watched).length
     const percentage= total> 0 ? (watched/total) * 100 : 0
   return (
-    <div className="w-64 bg-gray-200 h-3 rounded mb-4">
+    <div className="w-40 sm:w-64 bg-gray-200 h-2 sm:h-3 rounded mb-4">
       <div 
-        className="bg-gradient h-3 rounded transition-all" 
+        className="bg-gradient h-2 sm:h-3 rounded transition-all" 
         style={{ width: `${percentage}%` }}
       />
       <p className="text-sm text-center mt-1 text-white">

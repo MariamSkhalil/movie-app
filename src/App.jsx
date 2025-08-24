@@ -36,18 +36,22 @@ const App = () => {
   }
 
   function handleAddToWatchlist(movie) {
-  // avoid duplicates
-    if (!watchlist.find(m => m.id === movie.id)) {
-      setWatchlist([...watchlist, {movie, watched: false}])
-      updateWatchlistCount(movie)
-    }
+  // avoid duplicates correctly
+  if (!watchlist.find(item => item.movie.id === movie.id)) {
+    setWatchlist([...watchlist, { movie, watched: false }])
+    updateWatchlistCount(movie)
   }
+}
 
-  function handleRemoveFromWatchlist(movieID) {
-    setWatchlist(prev => prev.map(item =>
-    item.movie.id === movieID ? { ...item, watched: !item.watched } : item
-  ))
-  }
+function handleRemoveFromWatchlist(movieID) {
+  setWatchlist(prev =>
+    prev.map(item =>
+      item.movie.id === movieID
+        ? { ...item, watched: !item.watched }
+        : item
+    )
+  )
+}
 
   //Persist to Local Storage whenever watchlist changes
   useEffect(()=>{

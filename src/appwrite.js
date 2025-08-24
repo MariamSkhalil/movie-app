@@ -20,7 +20,7 @@ export const updateWatchlistCount = async (movie) => {
       [Query.equal("movie_id", movie.id)]
     );
 
-    if (result.documents.length > 0) {
+    if (result.total > 0) {
       // already exists → increment count
       const doc = result.documents[0];
 

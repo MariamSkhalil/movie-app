@@ -37,7 +37,7 @@ function MovieCard({movie :{title, vote_average, poster_path, original_language,
 
             <button 
                 onClick={onAddToWatchlist} 
-                className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg">
+                className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-800">
                 + Add to Watchlist
             </button>
         </div>
